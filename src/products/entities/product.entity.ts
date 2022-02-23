@@ -1,6 +1,15 @@
+import { CartItem } from 'src/cart-item/entities/cart-item.entity';
 import { Category } from 'src/categories/entities/category.entity';
-import { Order } from 'src/orders/entities/order.entity';
-import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { OrderItem } from 'src/order-item/entities/order-item.entity';
+import { Photo } from 'src/photos/entities/photo.entity';
+import {
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity()
 export class Product {
@@ -13,9 +22,22 @@ export class Product {
   @Column()
   status: string;
 
+  @Column()
+  price: number;
+
+  @Column()
+  quantity: number;
+
   @ManyToMany(() => Category, (category) => category.products)
+  @JoinTable()
   categories: Category[];
 
-  @ManyToMany(() => Order, (order) => order.products)
-  orders: Order[];
+  @OneToMany(() => OrderItem, (orderItem) => orderItem.product)
+  orderItems: OrderItem[];
+
+  @OneToMany(() => CartItem, (cart) => cart.product)
+  cartItems: CartItem[];
+
+  @OneToMany(() => Photo, (photo) => photo.product)
+  photos: Photo[];
 }

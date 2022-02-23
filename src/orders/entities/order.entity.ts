@@ -1,12 +1,20 @@
-import { Product } from 'src/products/entities/product.entity';
-import { Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { OrderItem } from 'src/order-item/entities/order-item.entity';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Order {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToMany(() => Product, (product) => product.orders)
-  @JoinTable()
-  products: Product[];
+  @Column()
+  total: number;
+
+  @Column()
+  dateOrder: Date;
+
+  @Column()
+  note: string;
+
+  @OneToMany(() => OrderItem, (orderItem) => orderItem.order)
+  orderItems: OrderItem[];
 }

@@ -3,6 +3,7 @@ import { UsersService } from 'src/users/users.service';
 import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { JwtService } from '@nestjs/jwt';
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -45,7 +46,11 @@ export class AuthService {
     return result;
   }
 
-  async findOne(id: number) {
-    return this.usersService.findOne(id);
+  async findOne(id: number, withCart = false) {
+    return this.usersService.findOne(id, withCart);
+  }
+
+  getCart(id: number) {
+    return this.usersService.getCart(id);
   }
 }

@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Cart } from 'src/cart/entities/cart.entity';
+import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class User {
@@ -16,4 +17,16 @@ export class User {
 
   @Column()
   address: string;
+
+  @Column()
+  phone: string;
+
+  @Column()
+  avatarUrl: string;
+
+  @Column()
+  city: string;
+
+  @OneToOne(() => Cart, (cart) => cart.user)
+  cart: Cart;
 }

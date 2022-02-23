@@ -1,26 +1,55 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
+import { Category } from './entities/category.entity';
 
 @Injectable()
 export class CategoriesService {
-  create(createCategoryDto: CreateCategoryDto) {
-    return 'This action adds a new category';
+  constructor(
+    @InjectRepository(Category) private categoryRepo: Repository<Category>,
+  ) {}
+  async create(createCategoryDto: CreateCategoryDto) {
+    const category = await this.categoryRepo.create(createCategoryDto);
+    console.log(category);
+    if (createCategoryDto.parentId)
+      category.parent = await this.categoryRepo.findOne(
+        createCategoryDto.parentId,
+      );
+    console.log(category);
+    return this.categoryRepo.save(category);
   }
 
   findAll() {
-    return `This action returns all categories`;
+    return this.categoryRepo.find({ relations: ['children'] });
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} category`;
+    return this.categoryRepo.findOne(id);
   }
 
-  update(id: number, updateCategoryDto: UpdateCategoryDto) {
-    return `This action updates a #${id} category`;
+  async update(id: number, updateCategoryDto: UpdateCategoryDto) {
+    const category = await this.categoryRepo.findOne(id);
+    if (!category) {
+      throw new NotFoundException('Category not found');
+    }
+    category.name = updateCategoryDto.name;
+    if (updateCategoryDto.parentId) {
+      const parentCategory = await this.categoryRepo.findOne(
+        updateCategoryDto.parentId,
+      );
+      category.parent = parentCategory;
+    }
+
+    return category;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} category`;
+  async remove(id: number) {
+    const category = await this.categoryRepo.findOne(id);
+    if (!category) {
+      throw new NotFoundException('Category not found');
+    }
+    return this.categoryRepo.remove(category);
   }
 }

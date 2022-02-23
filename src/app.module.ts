@@ -12,6 +12,14 @@ import { CategoriesModule } from './categories/categories.module';
 import { Category } from './categories/entities/category.entity';
 import { Product } from './products/entities/product.entity';
 import { Order } from './orders/entities/order.entity';
+import { OrderItem } from './order-item/entities/order-item.entity';
+import { CartItem } from './cart-item/entities/cart-item.entity';
+import { Cart } from './cart/entities/cart.entity';
+import { Photo } from './photos/entities/photo.entity';
+import { CartModule } from './cart/cart.module';
+import { OrderItemModule } from './order-item/order-item.module';
+import { CartItemModule } from './cart-item/cart-item.module';
+import { PhotosModule } from './photos/photos.module';
 
 @Module({
   imports: [
@@ -25,7 +33,16 @@ import { Order } from './orders/entities/order.entity';
         username: configService.get('DATABASE_USER'),
         password: configService.get('DATABASE_PASSWORD'),
         port: configService.get('DATABASE_PORT'),
-        entities: [User, Category, Product, Order],
+        entities: [
+          User,
+          Category,
+          Product,
+          Order,
+          Photo,
+          OrderItem,
+          CartItem,
+          Cart,
+        ],
         synchronize: true,
       }),
     }),
@@ -33,6 +50,10 @@ import { Order } from './orders/entities/order.entity';
     OrdersModule,
     ProductsModule,
     CategoriesModule,
+    CartModule,
+    PhotosModule,
+    CartItemModule,
+    OrderItemModule,
   ],
   controllers: [AppController],
   providers: [AppService],

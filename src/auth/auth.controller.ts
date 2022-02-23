@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  NotFoundException,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
@@ -22,5 +30,15 @@ export class AuthController {
   @Get('profile')
   async getProfile(@Req() req) {
     return this.authService.findOne(req.user.userId);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('cart')
+  async getCart(@Req() req) {
+    const user = await this.authService.findOne(req.user.userId, true);
+    if (!user.cart) {
+      throw new NotFoundException('Cart not found');
+    }
+    return user.cart;
   }
 }
