@@ -6,6 +6,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { Cart } from '../cart/entities/cart.entity';
 import { CartService } from 'src/cart/cart.service';
+import { GoogleSignUpUserDto } from './dto/google-signup-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -13,8 +14,16 @@ export class UsersService {
     @InjectRepository(User) private usersRepo: Repository<User>,
     private cartService: CartService,
   ) {}
+
   async create(createUserDto: CreateUserDto) {
     const user = await this.usersRepo.create(createUserDto);
+    const cart = await this.cartService.create(new Cart());
+    user.cart = cart;
+    return this.usersRepo.save(user);
+  }
+
+  async createForGoogle(googleSignUpUserDto: GoogleSignUpUserDto) {
+    const user = await this.usersRepo.create(googleSignUpUserDto);
     const cart = await this.cartService.create(new Cart());
     user.cart = cart;
     return this.usersRepo.save(user);

@@ -22,7 +22,7 @@ export class CategoriesService {
   }
 
   findAll() {
-    return this.categoryRepo.find({ relations: ['children'] });
+    return this.categoryRepo.find({ relations: ['children', 'parent'] });
   }
 
   findOne(id: number) {
@@ -30,7 +30,9 @@ export class CategoriesService {
   }
 
   async update(id: number, updateCategoryDto: UpdateCategoryDto) {
-    const category = await this.categoryRepo.findOne(id);
+    const category = await this.categoryRepo.findOne(id, {
+      relations: ['children', 'parent'],
+    });
     if (!category) {
       throw new NotFoundException('Category not found');
     }
@@ -39,8 +41,9 @@ export class CategoriesService {
       const parentCategory = await this.categoryRepo.findOne(
         updateCategoryDto.parentId,
       );
+
       category.parent = parentCategory;
-    }
+    } else category.parent = null;
 
     return category;
   }

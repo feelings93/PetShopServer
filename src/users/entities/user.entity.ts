@@ -9,23 +9,26 @@ export class User {
   @Column({ unique: true })
   email: string;
 
-  @Column()
-  password: string;
+  @Column({ nullable: true })
+  password?: string;
+
+  @Column({ default: 'user' })
+  role: string;
 
   @Column()
   name: string;
 
-  @Column()
-  address: string;
+  @Column({ nullable: true })
+  address?: string;
 
-  @Column()
-  phone: string;
+  @Column({ nullable: true })
+  phone?: string;
 
-  @Column()
-  avatarUrl: string;
+  @Column({ nullable: true })
+  avatarUrl?: string;
 
-  @Column()
-  city: string;
+  @Column({ nullable: true })
+  city?: string;
 
   @OneToOne(() => Cart, (cart) => cart.user)
   cart: Cart;
