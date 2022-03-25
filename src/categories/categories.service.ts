@@ -45,7 +45,7 @@ export class CategoriesService {
       category.parent = parentCategory;
     } else category.parent = null;
 
-    return category;
+    return this.categoryRepo.save(category);
   }
 
   async remove(id: number) {
