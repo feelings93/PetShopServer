@@ -1,4 +1,5 @@
-import { IsArray, IsNumber, IsString } from 'class-validator';
+import { IsString } from 'class-validator';
+import { Category } from 'src/categories/entities/category.entity';
 
 export class CreateProductDto {
   @IsString()
@@ -7,12 +8,11 @@ export class CreateProductDto {
   @IsString()
   status: string;
 
-  @IsArray()
-  photoUrls: string[];
+  categories: Category[];
 
-  @IsNumber()
+  selectedCategories: string[];
+
   price: number;
 
-  @IsNumber()
   quantity: number;
 }

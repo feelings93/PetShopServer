@@ -4,10 +4,15 @@ import {
   Get,
   NotFoundException,
   Post,
+  Patch,
   Req,
   UseGuards,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { UpdateUserDto } from 'src/users/dto/update-user.dto';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { LocalAuthGuard } from './guards/local-auth.guard';
@@ -35,6 +40,22 @@ export class AuthController {
   @Get('profile')
   async getProfile(@Req() req) {
     return this.authService.findOne(req.user.userId);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Patch('profile')
+  @UseInterceptors(FileInterceptor('file'))
+  async updateProfile(
+    @Req() req,
+    @UploadedFile() file: Express.Multer.File,
+    @Body() body: UpdateUserDto,
+  ) {
+    return this.authService.updateProfile(req.user.userId, body, file);
+  }
+  @UseGuards(JwtAuthGuard)
+  @Patch('password')
+  async changePassword(@Req() req, @Body() body: UpdateUserDto) {
+    return this.authService.changePassword(req.user.userId, body);
   }
 
   @UseGuards(JwtAuthGuard)

@@ -18,15 +18,20 @@ export class CategoriesService {
         createCategoryDto.parentId,
       );
     console.log(category);
-    return this.categoryRepo.save(category);
+    const newCategory = await this.categoryRepo.save(category);
+    return this.categoryRepo.findOne(newCategory.id, {
+      relations: ['children', 'parent'],
+    });
   }
 
   findAll() {
-    return this.categoryRepo.find({ relations: ['children', 'parent'] });
+    return this.categoryRepo.find({
+      relations: ['children', 'parent', 'products'],
+    });
   }
 
   findOne(id: number) {
-    return this.categoryRepo.findOne(id);
+    return this.categoryRepo.findOne(id, { relations: ['parent'] });
   }
 
   async update(id: number, updateCategoryDto: UpdateCategoryDto) {

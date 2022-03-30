@@ -10,6 +10,7 @@ import { JwtService } from '@nestjs/jwt';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 import { GoogleSignUpUserDto } from 'src/users/dto/google-signup-user.dto';
+import { UpdateUserDto } from 'src/users/dto/update-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -80,5 +81,22 @@ export class AuthService {
   }
   getCart(id: number) {
     return this.usersService.getCart(id);
+  }
+  async updateProfile(
+    id: number,
+    body: UpdateUserDto,
+    file: Express.Multer.File,
+  ) {
+    return this.usersService.update(id, body, file);
+  }
+
+  async changePassword(id: number, body: UpdateUserDto) {
+    const user = await this.usersService.findOne(id);
+    if (!user || !(await bcrypt.compare(body.oldPassword, user.password))) {
+      throw new BadRequestException('Password incorrect');
+    }
+    const saltRounds = 10;
+    body.password = await bcrypt.hash(body.password, saltRounds);
+    return this.usersService.update(id, body, null);
   }
 }
