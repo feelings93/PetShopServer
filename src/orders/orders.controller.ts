@@ -6,11 +6,15 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
+import { IsAdminGuard } from 'src/auth/guards/is-admin.guard';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
+// @UseGuards(JwtAuthGuard, IsAdminGuard)
 @Controller('orders')
 export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}

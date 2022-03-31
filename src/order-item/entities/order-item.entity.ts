@@ -10,6 +10,9 @@ export class OrderItem {
   @Column()
   quantity: number;
 
+  @Column()
+  price: number;
+
   @ManyToOne(() => Order, (order) => order.orderItems)
   order: Order;
 

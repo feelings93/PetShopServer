@@ -12,6 +12,7 @@ import { CategoriesModule } from 'src/categories/categories.module';
     PhotosModule,
     CategoriesModule,
   ],
+  exports: [ProductsService],
   controllers: [ProductsController],
   providers: [ProductsService],
 })

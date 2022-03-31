@@ -96,6 +96,13 @@ export class ProductsService {
       throw new NotFoundException('Product not found!');
     }
     product = { ...product, ...updateProductDto };
+    if (product.quantity === 0) {
+      product.status = 'Hết hàng';
+    } else if (product.quantity > 0) {
+      product.status = 'Còn hàng';
+    } else {
+      throw new BadRequestException('Số lượng sản phẩm phải lớn hơn 0');
+    }
     // const photos = [];
     // for (let i = 0; i < updateProductDto.photoUrls.length; i++) {
     //   const createPhotoDto = new CreatePhotoDto();

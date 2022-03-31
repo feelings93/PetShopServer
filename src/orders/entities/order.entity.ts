@@ -10,7 +10,28 @@ export class Order {
   total: number;
 
   @Column()
+  customerName: string;
+
+  @Column()
+  paymentType: string;
+
+  @Column()
   dateOrder: Date;
+
+  @Column()
+  city: string;
+
+  @Column()
+  district: string;
+
+  @Column()
+  address: string;
+
+  @Column()
+  phone: string;
+
+  @Column({ default: 'Chờ xử lý' })
+  status: string;
 
   @Column()
   note: string;
