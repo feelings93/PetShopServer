@@ -19,7 +19,7 @@ export class Order {
   dateOrder: Date;
 
   @Column()
-  city: string;
+  province: string;
 
   @Column()
   district: string;

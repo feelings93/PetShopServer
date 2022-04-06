@@ -8,7 +8,7 @@ export class CreateOrderDto {
   paymentType: string;
 
   @IsString()
-  city: string;
+  province: string;
 
   @IsString()
   district: string;

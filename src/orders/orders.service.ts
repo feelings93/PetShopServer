@@ -31,7 +31,15 @@ export class OrdersService {
   }
 
   findOne(id: number) {
-    return this.orderRepo.findOne(id);
+    return this.orderRepo.findOne(id, {
+      join: {
+        alias: 'order',
+        leftJoinAndSelect: {
+          orderItems: 'order.orderItems',
+          product: 'orderItems.product',
+        },
+      },
+    });
   }
 
   async update(id: number, updateOrderDto: UpdateOrderDto) {
