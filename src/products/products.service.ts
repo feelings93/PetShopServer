@@ -87,15 +87,88 @@ export class ProductsService {
   }
 
   findOne(id: number) {
-    return this.productRepo.findOne({ id: id });
+    return this.productRepo.findOne(
+      { id: id },
+      { relations: ['photos', 'categories'] },
+    );
   }
 
-  async update(id: number, updateProductDto: UpdateProductDto) {
+  async update(
+    id: number,
+    updateProductDto: UpdateProductDto,
+    files: Array<Express.Multer.File> = null,
+  ) {
+    if (updateProductDto.photoUrls)
+      updateProductDto.photoUrls = updateProductDto.photoUrls.map((x) =>
+        JSON.parse(x),
+      );
+    else updateProductDto.photoUrls = [];
+    console.log(files, updateProductDto.photoUrls);
+    if (updateProductDto.selectedCategories)
+      updateProductDto.categories = updateProductDto.selectedCategories.map(
+        (x) => JSON.parse(x),
+      );
+    else updateProductDto.categories = [];
     let product = await this.findOne(id);
     if (!product) {
       throw new NotFoundException('Product not found!');
     }
     product = { ...product, ...updateProductDto };
+    const initIdPhotos = product.photos.map((x) => x.id);
+    let photos = [];
+
+    if (files || product.photos.length > updateProductDto.photoUrls.length) {
+      for (let i = 0; i < initIdPhotos.length; i++) {
+        await this.photoService.remove(initIdPhotos[i]);
+      }
+      let j = 0;
+      console.log('cc');
+      for (let i = 0; i < updateProductDto.photoUrls.length; i++) {
+        const createPhotoDto = new CreatePhotoDto();
+        if (updateProductDto.photoUrls[i].includes('blob:http://')) {
+          try {
+            const storageRef = ref(
+              storage,
+              `images/products/${product.id}/` + files[j].originalname,
+            );
+            const snapshot = await uploadBytes(storageRef, files[j].buffer);
+            createPhotoDto.url = await getDownloadURL(snapshot.ref);
+            const photo = await this.photoService.create(createPhotoDto);
+            photos.push(photo);
+            j++;
+          } catch (error) {
+            console.log(error);
+            throw new BadRequestException(error);
+          }
+        } else {
+          const createPhotoDto = new CreatePhotoDto();
+          createPhotoDto.url = updateProductDto.photoUrls[i];
+          const photo = await this.photoService.create(createPhotoDto);
+          photos.push(photo);
+        }
+      }
+    } else {
+      photos = product.photos;
+    }
+    product.photos = photos;
+    const categories: Category[] = [];
+    for (let i = 0; i < updateProductDto.categories.length; i++) {
+      const category = await this.cateService.findOne(
+        updateProductDto.categories[i].id,
+      );
+      categories.push(category);
+
+      if (
+        category.parent &&
+        categories.findIndex((x) => x.id === category.parent.id) === -1
+      ) {
+        const parentCategory = await this.cateService.findOne(
+          category.parent.id,
+        );
+        categories.push(parentCategory);
+      }
+    }
+    product.categories = categories;
     if (product.quantity === 0) {
       product.status = 'Hết hàng';
     } else if (product.quantity > 0) {
@@ -103,14 +176,6 @@ export class ProductsService {
     } else {
       throw new BadRequestException('Số lượng sản phẩm phải lớn hơn 0');
     }
-    // const photos = [];
-    // for (let i = 0; i < updateProductDto.photoUrls.length; i++) {
-    //   const createPhotoDto = new CreatePhotoDto();
-    //   createPhotoDto.url = updateProductDto.photoUrls[i];
-    //   const photo = await this.photoService.update(createPhotoDto);
-    //   photos.push(photo);
-    // }
-    // product.photos = photos;
     return this.productRepo.save(product);
   }
 

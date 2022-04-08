@@ -1,4 +1,4 @@
-import { IsString } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 import { Category } from 'src/categories/entities/category.entity';
 
 export class CreateProductDto {
@@ -15,4 +15,7 @@ export class CreateProductDto {
   price: number;
 
   quantity: number;
+
+  @IsOptional()
+  describe: string;
 }

@@ -28,6 +28,9 @@ export class Product {
   @Column()
   quantity: number;
 
+  @Column()
+  describe: string;
+
   @ManyToMany(() => Category, (category) => category.products)
   @JoinTable()
   categories: Category[];
