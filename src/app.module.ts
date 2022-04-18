@@ -3,27 +3,15 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { User } from './users/entities/user.entity';
-import { UsersModule } from './users/users.module';
-import { AuthModule } from './auth/auth.module';
-import { OrdersModule } from './orders/orders.module';
-import { ProductsModule } from './products/products.module';
-import { CategoriesModule } from './categories/categories.module';
-import { Category } from './categories/entities/category.entity';
-import { Product } from './products/entities/product.entity';
-import { Order } from './orders/entities/order.entity';
-import { OrderItem } from './order-item/entities/order-item.entity';
-import { CartItem } from './cart-item/entities/cart-item.entity';
-import { Cart } from './cart/entities/cart.entity';
-import { Photo } from './photos/entities/photo.entity';
-import { CartModule } from './cart/cart.module';
-import { OrderItemModule } from './order-item/order-item.module';
-import { CartItemModule } from './cart-item/cart-item.module';
-import { PhotosModule } from './photos/photos.module';
+
+import { CustomerModule } from './customer/customer.module';
+import { AddressModule } from './address/address.module';
+import { Address } from './address/entities/address.entity';
+import { Customer } from './customer/entities/customer.entity';
+import { EmployeeToServiceModule } from './employee-to-service/employee-to-service.module';
 
 @Module({
   imports: [
-    UsersModule,
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
@@ -33,27 +21,14 @@ import { PhotosModule } from './photos/photos.module';
         username: configService.get('DATABASE_USER'),
         password: configService.get('DATABASE_PASSWORD'),
         port: configService.get('DATABASE_PORT'),
-        entities: [
-          User,
-          Category,
-          Product,
-          Order,
-          Photo,
-          OrderItem,
-          CartItem,
-          Cart,
-        ],
+        entities: [Address, Customer],
         synchronize: true,
       }),
     }),
-    AuthModule,
-    OrdersModule,
-    ProductsModule,
-    CategoriesModule,
-    CartModule,
-    PhotosModule,
-    CartItemModule,
-    OrderItemModule,
+
+    CustomerModule,
+    AddressModule,
+    EmployeeToServiceModule,
   ],
   controllers: [AppController],
   providers: [AppService],
