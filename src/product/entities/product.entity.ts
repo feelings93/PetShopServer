@@ -1,4 +1,6 @@
 import { Category } from 'src/category/entities/category.entity';
+import { ProductCartItem } from 'src/product-cart-item/entities/product-cart-item.entity';
+import { ProductOrderItem } from 'src/product-order-item/entities/product-order-item.entity';
 import { ProductPhoto } from 'src/product-photo/entities/product-photo.entity';
 import { SubCategory } from 'src/sub-category/entities/sub-category.entity';
 import {
@@ -34,4 +36,16 @@ export class Product {
 
   @OneToMany(() => ProductPhoto, (photo) => photo.product)
   photos: ProductPhoto[];
+
+  @OneToMany(
+    () => ProductOrderItem,
+    (productOrderItem) => productOrderItem.product,
+  )
+  productOrderItems: ProductOrderItem[];
+
+  @OneToMany(
+    () => ProductCartItem,
+    (productCartItem) => productCartItem.product,
+  )
+  productCartItems: ProductCartItem[];
 }

@@ -1,9 +1,19 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { PetTypeService } from './pet-type.service';
 import { CreatePetTypeDto } from './dto/create-pet-type.dto';
 import { UpdatePetTypeDto } from './dto/update-pet-type.dto';
 
-@Controller('pet-type')
+@ApiTags('pet-types')
+@Controller('pet-types')
 export class PetTypeController {
   constructor(private readonly petTypeService: PetTypeService) {}
 

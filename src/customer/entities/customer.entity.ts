@@ -1,4 +1,5 @@
 import { Address } from 'src/address/entities/address.entity';
+import { Cart } from 'src/cart/entities/cart.entity';
 import {
   Column,
   Entity,
@@ -37,4 +38,8 @@ export class Customer {
 
   @OneToMany(() => Address, (address) => address.customer)
   addresses: Address[];
+
+  @JoinColumn()
+  @OneToOne(() => Cart)
+  cart: Cart;
 }

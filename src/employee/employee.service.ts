@@ -1,23 +1,35 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
+import { Employee } from './entities/employee.entity';
 
 @Injectable()
 export class EmployeeService {
-  create(createEmployeeDto: CreateEmployeeDto) {
-    return 'This action adds a new employee';
+  constructor(
+    @InjectRepository(Employee)
+    private readonly employeeRepo: Repository<Employee>,
+  ) {}
+  async create(createEmployeeDto: CreateEmployeeDto) {
+    const employee = await this.employeeRepo.create(createEmployeeDto);
+    return this.employeeRepo.save(employee);
   }
 
   findAll() {
-    return `This action returns all employee`;
+    return this.employeeRepo.find({});
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} employee`;
+  async findOne(id: number) {
+    const employee = await this.employeeRepo.findOne(id);
+    if (!employee) throw new NotFoundException('Employee not found!');
+    return employee;
   }
 
-  update(id: number, updateEmployeeDto: UpdateEmployeeDto) {
-    return `This action updates a #${id} employee`;
+  async update(id: number, updateEmployeeDto: UpdateEmployeeDto) {
+    let employee = await this.findOne(id);
+    employee = { ...employee, ...updateEmployeeDto };
+    return this.employeeRepo.save(employee);
   }
 
   remove(id: number) {

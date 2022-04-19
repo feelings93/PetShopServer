@@ -1,23 +1,39 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CreatePetTypeDto } from './dto/create-pet-type.dto';
 import { UpdatePetTypeDto } from './dto/update-pet-type.dto';
+import { PetType } from './entities/pet-type.entity';
 
 @Injectable()
 export class PetTypeService {
-  create(createPetTypeDto: CreatePetTypeDto) {
-    return 'This action adds a new petType';
+  constructor(
+    @InjectRepository(PetType)
+    private readonly petTypeRepo: Repository<PetType>,
+  ) {}
+  async create(createPetTypeDto: CreatePetTypeDto) {
+    const petType = await this.petTypeRepo.create(createPetTypeDto);
+    return this.petTypeRepo.save(petType);
   }
 
   findAll() {
-    return `This action returns all petType`;
+    return this.petTypeRepo.find({
+      relations: ['pets', 'breeds'],
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} petType`;
+  async findOne(id: number) {
+    const petType = await this.petTypeRepo.findOne(id, {
+      relations: ['pets', 'breeds'],
+    });
+    if (!petType) throw new NotFoundException('Pet type not found!');
+    return petType;
   }
 
-  update(id: number, updatePetTypeDto: UpdatePetTypeDto) {
-    return `This action updates a #${id} petType`;
+  async update(id: number, updatePetTypeDto: UpdatePetTypeDto) {
+    let petType = await this.findOne(id);
+    petType = { ...petType, ...updatePetTypeDto };
+    return this.petTypeRepo.save(petType);
   }
 
   remove(id: number) {

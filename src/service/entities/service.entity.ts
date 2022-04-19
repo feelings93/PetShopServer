@@ -1,4 +1,5 @@
 import { EmployeeToService } from 'src/employee-to-service/entities/employee-to-service.entity';
+import { ServiceOrderItem } from 'src/service-order-item/entities/service-order-item.entity';
 import { ServicePhoto } from 'src/service-photo/entities/service-photo.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
@@ -26,4 +27,10 @@ export class Service {
     (employeeToService) => employeeToService.service,
   )
   employeeToServices: EmployeeToService[];
+
+  @OneToMany(
+    () => ServiceOrderItem,
+    (serviceOrderItem) => serviceOrderItem.service,
+  )
+  serviceOrderItems: ServiceOrderItem[];
 }
