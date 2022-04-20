@@ -54,6 +54,7 @@ import { AdminAuthModule } from './admin-auth/admin-auth.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
