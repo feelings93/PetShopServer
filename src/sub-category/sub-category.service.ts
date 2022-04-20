@@ -19,7 +19,8 @@ export class SubCategoryService {
       createSubCategoryDto.categoryId,
     );
     subCategory.category = category;
-    return this.subCategoryRepo.save(subCategory);
+    await this.subCategoryRepo.save(subCategory);
+    return this.findOne(subCategory.id);
   }
 
   findAll() {

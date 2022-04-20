@@ -16,7 +16,8 @@ export class BreedService {
     const type = await this.petTypeService.findOne(createBreedDto.typeId);
     const breed = await this.breedRepo.create(createBreedDto);
     breed.type = type;
-    return this.breedRepo.save(breed);
+    await this.breedRepo.save(breed);
+    return this.findOne(breed.id);
   }
 
   findAll() {

@@ -13,15 +13,32 @@ export class EmployeeService {
   ) {}
   async create(createEmployeeDto: CreateEmployeeDto) {
     const employee = await this.employeeRepo.create(createEmployeeDto);
-    return this.employeeRepo.save(employee);
+    await this.employeeRepo.save(employee);
+    return this.findOne(employee.id);
   }
 
   findAll() {
-    return this.employeeRepo.find({});
+    return this.employeeRepo.find({
+      join: {
+        alias: 'employee',
+        leftJoinAndSelect: {
+          employeeToServices: 'employee.employeeToServices',
+          service: 'employeeToServices.service',
+        },
+      },
+    });
   }
 
   async findOne(id: number) {
-    const employee = await this.employeeRepo.findOne(id);
+    const employee = await this.employeeRepo.findOne(id, {
+      join: {
+        alias: 'employee',
+        leftJoinAndSelect: {
+          employeeToServices: 'employee.employeeToServices',
+          service: 'employeeToServices.service',
+        },
+      },
+    });
     if (!employee) throw new NotFoundException('Employee not found!');
     return employee;
   }

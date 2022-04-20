@@ -25,7 +25,14 @@ export class AdminAuthService {
     const payload = { email: user.email, sub: user.id, role: user.role };
     return {
       accessToken: this.jwtService.sign(payload),
+      user: await this.getProfile(user.id),
     };
+  }
+  async getProfile(id: number) {
+    const user = await this.adminUserSerivce.findOne(id);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password, ...result } = user;
+    return result;
   }
 
   async updateProfile(id: number, body: UpdateAdminUserDto) {

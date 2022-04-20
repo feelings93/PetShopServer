@@ -29,7 +29,7 @@ export class AdminAuthController {
   @UseGuards(JwtAuthGuard)
   @Get('profile')
   getProfile(@Request() req) {
-    return req.user;
+    return this.adminAuthService.getProfile(req.user.userId);
   }
 
   @UseGuards(JwtAuthGuard)

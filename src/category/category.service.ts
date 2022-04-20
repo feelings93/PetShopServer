@@ -13,7 +13,8 @@ export class CategoryService {
   ) {}
   async create(createCategoryDto: CreateCategoryDto) {
     const category = await this.categoryRepo.create(createCategoryDto);
-    return this.categoryRepo.save(category);
+    await this.categoryRepo.save(category);
+    return this.findOne(category.id);
   }
 
   findAll() {

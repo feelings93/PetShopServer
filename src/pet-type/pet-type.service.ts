@@ -13,7 +13,8 @@ export class PetTypeService {
   ) {}
   async create(createPetTypeDto: CreatePetTypeDto) {
     const petType = await this.petTypeRepo.create(createPetTypeDto);
-    return this.petTypeRepo.save(petType);
+    await this.petTypeRepo.save(petType);
+    return this.findOne(petType.id);
   }
 
   findAll() {
