@@ -130,7 +130,7 @@ export class PetService {
       photos = pet.photos;
     }
     pet.photos = photos;
-    return `This action updates a #${id} pet`;
+    return this.petRepo.save(pet);
   }
 
   remove(id: number) {
