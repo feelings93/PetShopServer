@@ -28,6 +28,9 @@ export class Pet {
   @Column()
   price: number;
 
+  @Column({ default: 'Còn hàng' })
+  status: string;
+
   @Column()
   describe: string;
 

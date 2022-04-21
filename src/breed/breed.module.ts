@@ -9,5 +9,6 @@ import { PetTypeModule } from 'src/pet-type/pet-type.module';
   imports: [TypeOrmModule.forFeature([Breed]), PetTypeModule],
   controllers: [BreedController],
   providers: [BreedService],
+  exports: [BreedService],
 })
 export class BreedModule {}

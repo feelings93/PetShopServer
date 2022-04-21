@@ -26,6 +26,9 @@ export class Product {
   price: number;
 
   @Column()
+  status: string;
+
+  @Column()
   describe: string;
 
   @ManyToOne(() => Category, (category) => category.products)
@@ -34,7 +37,7 @@ export class Product {
   @ManyToOne(() => SubCategory, (sub) => sub.products)
   subCategory: SubCategory;
 
-  @OneToMany(() => ProductPhoto, (photo) => photo.product)
+  @OneToMany(() => ProductPhoto, (photo) => photo.product, { cascade: true })
   photos: ProductPhoto[];
 
   @OneToMany(
