@@ -41,8 +41,15 @@ export class PetController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePetDto: UpdatePetDto) {
-    return this.petService.update(+id, updatePetDto);
+  @UseInterceptors(FilesInterceptor('files'))
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({ type: UpdatePetDto })
+  update(
+    @Param('id') id: string,
+    @Body() updatePetDto: UpdatePetDto,
+    @UploadedFiles() files: Array<Express.Multer.File>,
+  ) {
+    return this.petService.update(+id, updatePetDto, files);
   }
 
   @Delete(':id')

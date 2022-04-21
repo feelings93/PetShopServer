@@ -8,5 +8,6 @@ import { PetPhoto } from './entities/pet-photo.entity';
   imports: [TypeOrmModule.forFeature([PetPhoto])],
   controllers: [PetPhotoController],
   providers: [PetPhotoService],
+  exports: [PetPhotoService],
 })
 export class PetPhotoModule {}
