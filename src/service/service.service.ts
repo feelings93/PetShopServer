@@ -68,7 +68,8 @@ export class ServiceService {
       }
     }
     service.photos = photos;
-    return this.serviceRepo.save(service);
+    await this.serviceRepo.save(service);
+    return this.findOne(service.id);
   }
 
   findAll() {
