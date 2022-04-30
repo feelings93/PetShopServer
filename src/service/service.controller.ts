@@ -41,8 +41,15 @@ export class ServiceController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateServiceDto: UpdateServiceDto) {
-    return this.serviceService.update(+id, updateServiceDto);
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({ type: UpdateServiceDto })
+  @UseInterceptors(FilesInterceptor('files'))
+  update(
+    @Param('id') id: string,
+    @Body() updateServiceDto: UpdateServiceDto,
+    @UploadedFiles() files: Array<Express.Multer.File>,
+  ) {
+    return this.serviceService.update(+id, updateServiceDto, files);
   }
 
   @Delete(':id')

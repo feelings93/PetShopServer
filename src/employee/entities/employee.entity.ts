@@ -22,6 +22,7 @@ export class Employee {
   @OneToMany(
     () => EmployeeToService,
     (employeeToService) => employeeToService.employee,
+    { cascade: true },
   )
   employeeToServices: EmployeeToService[];
 

@@ -1,9 +1,16 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CreateServicePhotoDto } from './dto/create-service-photo.dto';
 import { UpdateServicePhotoDto } from './dto/update-service-photo.dto';
+import { ServicePhoto } from './entities/service-photo.entity';
 
 @Injectable()
 export class ServicePhotoService {
+  constructor(
+    @InjectRepository(ServicePhoto)
+    private readonly servicePhotoRepo: Repository<ServicePhoto>,
+  ) {}
   create(createServicePhotoDto: CreateServicePhotoDto) {
     return 'This action adds a new servicePhoto';
   }
@@ -20,7 +27,9 @@ export class ServicePhotoService {
     return `This action updates a #${id} servicePhoto`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} servicePhoto`;
+  async remove(id: number) {
+    const photo = await this.servicePhotoRepo.findOne(id);
+    if (!photo) throw new NotFoundException('Photo not found!');
+    return this.servicePhotoRepo.remove(photo);
   }
 }
