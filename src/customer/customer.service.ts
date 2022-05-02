@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Cart } from 'src/cart/entities/cart.entity';
 import { Repository } from 'typeorm';
 import { CreateCustomerDto } from './dto/create-customer.dto';
 import { UpdateCustomerDto } from './dto/update-customer.dto';
@@ -12,15 +13,20 @@ export class CustomerService {
   ) {}
   async create(createCustomerDto: CreateCustomerDto) {
     const newCustomer = await this.customerRepo.create(createCustomerDto);
+    newCustomer.cart = new Cart();
     return this.customerRepo.save(newCustomer);
   }
 
   findAll() {
-    return this.customerRepo.find();
+    return this.customerRepo.find({
+      relations: ['defaultAddress', 'addresses'],
+    });
   }
 
   async findOne(id: number) {
-    const customer = await this.customerRepo.findOne(id);
+    const customer = await this.customerRepo.findOne(id, {
+      relations: ['defaultAddress', 'addresses', 'cart'],
+    });
     if (!customer) {
       throw new NotFoundException('Không tìm thấy khách hàng này!');
     }

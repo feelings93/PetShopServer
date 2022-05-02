@@ -16,5 +16,6 @@ import { PetPhotoModule } from 'src/pet-photo/pet-photo.module';
   ],
   controllers: [PetController],
   providers: [PetService],
+  exports: [PetService],
 })
 export class PetModule {}

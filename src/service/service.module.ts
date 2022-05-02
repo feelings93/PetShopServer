@@ -16,5 +16,6 @@ import { EmployeeToServiceModule } from 'src/employee-to-service/employee-to-ser
   ],
   controllers: [ServiceController],
   providers: [ServiceService],
+  exports: [ServiceService],
 })
 export class ServiceModule {}

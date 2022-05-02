@@ -1,9 +1,16 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CreateProductCartItemDto } from './dto/create-product-cart-item.dto';
 import { UpdateProductCartItemDto } from './dto/update-product-cart-item.dto';
+import { ProductCartItem } from './entities/product-cart-item.entity';
 
 @Injectable()
 export class ProductCartItemService {
+  constructor(
+    @InjectRepository(ProductCartItem)
+    private readonly pciRepo: Repository<ProductCartItem>,
+  ) {}
   create(createProductCartItemDto: CreateProductCartItemDto) {
     return 'This action adds a new productCartItem';
   }
@@ -12,15 +19,21 @@ export class ProductCartItemService {
     return `This action returns all productCartItem`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} productCartItem`;
+  async findOne(id: number) {
+    const productItem = await this.pciRepo.findOne(id);
+    if (!productItem)
+      throw new NotFoundException('Product cart item not found!');
+    return productItem;
   }
 
-  update(id: number, updateProductCartItemDto: UpdateProductCartItemDto) {
-    return `This action updates a #${id} productCartItem`;
+  async update(id: number, updateProductCartItemDto: UpdateProductCartItemDto) {
+    const productItem = await this.findOne(id);
+    productItem.quantity = updateProductCartItemDto.quantity;
+    return this.pciRepo.save(productItem);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} productCartItem`;
+  async remove(id: number) {
+    const productItem = await this.findOne(id);
+    return this.pciRepo.remove(productItem);
   }
 }

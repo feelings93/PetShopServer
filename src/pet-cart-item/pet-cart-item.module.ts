@@ -8,5 +8,6 @@ import { PetCartItem } from './entities/pet-cart-item.entity';
   imports: [TypeOrmModule.forFeature([PetCartItem])],
   controllers: [PetCartItemController],
   providers: [PetCartItemService],
+  exports: [PetCartItemService],
 })
 export class PetCartItemModule {}

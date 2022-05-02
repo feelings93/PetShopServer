@@ -1,11 +1,12 @@
-import { IsEmail, IsString } from 'class-validator';
+import { IsEmail, IsIn, IsOptional, IsString } from 'class-validator';
 
 export class CreateCustomerDto {
+  @IsOptional()
   @IsEmail()
-  email: string;
+  email?: string;
 
   @IsString()
-  password: string;
+  password?: string;
 
   @IsString()
   firstName: string;
@@ -14,6 +15,7 @@ export class CreateCustomerDto {
   lastName: string;
 
   @IsString()
+  @IsIn(['Nam', 'Nữ'])
   gender: string;
 
   @IsString()

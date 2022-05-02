@@ -11,6 +11,9 @@ export class ServiceOrderItem {
   @Column()
   name: string;
 
+  @Column()
+  price: number;
+
   @ManyToOne(() => Service, (service) => service.serviceOrderItems)
   service: Service;
 

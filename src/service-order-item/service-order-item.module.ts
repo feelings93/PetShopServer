@@ -8,5 +8,6 @@ import { ServiceOrderItem } from './entities/service-order-item.entity';
   imports: [TypeOrmModule.forFeature([ServiceOrderItem])],
   controllers: [ServiceOrderItemController],
   providers: [ServiceOrderItemService],
+  exports: [ServiceOrderItemService],
 })
 export class ServiceOrderItemModule {}

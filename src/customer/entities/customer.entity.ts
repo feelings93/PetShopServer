@@ -1,5 +1,6 @@
 import { Address } from 'src/address/entities/address.entity';
 import { Cart } from 'src/cart/entities/cart.entity';
+import { Order } from 'src/order/entities/order.entity';
 import {
   Column,
   Entity,
@@ -32,6 +33,9 @@ export class Customer {
   @Column({ unique: true })
   phone: string;
 
+  @OneToMany(() => Order, (order) => order.customer)
+  orders: Order[];
+
   @OneToOne(() => Address)
   @JoinColumn()
   defaultAddress: Address;
@@ -40,6 +44,6 @@ export class Customer {
   addresses: Address[];
 
   @JoinColumn()
-  @OneToOne(() => Cart)
+  @OneToOne(() => Cart, { cascade: true })
   cart: Cart;
 }

@@ -8,5 +8,6 @@ import { ProductOrderItem } from './entities/product-order-item.entity';
   imports: [TypeOrmModule.forFeature([ProductOrderItem])],
   controllers: [ProductOrderItemController],
   providers: [ProductOrderItemService],
+  exports: [ProductOrderItemService],
 })
 export class ProductOrderItemModule {}

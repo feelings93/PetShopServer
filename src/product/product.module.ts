@@ -16,5 +16,6 @@ import { ProductPhotoModule } from 'src/product-photo/product-photo.module';
   ],
   controllers: [ProductController],
   providers: [ProductService],
+  exports: [ProductService],
 })
 export class ProductModule {}

@@ -11,7 +11,7 @@ import { AdminUserService } from './admin-user.service';
 import { CreateAdminUserDto } from './dto/create-admin-user.dto';
 import { UpdateAdminUserDto } from './dto/update-admin-user.dto';
 
-@Controller('admin-user')
+@Controller('admin-users')
 export class AdminUserController {
   constructor(private readonly adminUserService: AdminUserService) {}
 
