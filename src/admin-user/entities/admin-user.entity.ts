@@ -23,6 +23,6 @@ export class AdminUser {
   @Column()
   role: string;
 
-  @Column({ default: false })
-  disabled: boolean;
+  @Column({ default: true })
+  actived: boolean;
 }

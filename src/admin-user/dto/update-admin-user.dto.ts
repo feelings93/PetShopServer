@@ -6,7 +6,7 @@ export class UpdateAdminUserDto extends PartialType(CreateAdminUserDto) {
   @ApiProperty()
   @IsBoolean()
   @IsOptional()
-  disabled?: boolean;
+  actived?: boolean;
 
   @ApiProperty()
   @IsString()

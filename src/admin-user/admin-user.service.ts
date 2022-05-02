@@ -52,7 +52,8 @@ export class AdminUserService {
       ? bcrypt.hashSync(updateAdminUserDto.password, saltRounds)
       : adminUser.password;
     adminUser.role = updateAdminUserDto?.role || adminUser.role;
-    adminUser.disabled = updateAdminUserDto?.disabled || adminUser.disabled;
+    if (typeof updateAdminUserDto?.actived === 'boolean')
+      adminUser.actived = updateAdminUserDto?.actived;
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password, ...result } = await this.adminUserRepo.save(adminUser);
