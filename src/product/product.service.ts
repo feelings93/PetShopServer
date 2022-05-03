@@ -118,12 +118,14 @@ export class ProductService {
     if (product.quantity > 0) product.status = 'Còn hàng';
     else product.status = 'Hết hàng';
     // Add relation
-    product.category = await this.categoryService.findOne(
-      updateProductDto.categoryId,
-    );
-    product.subCategory = await this.subCategoryService.findOne(
-      updateProductDto.subCategoryId,
-    );
+    if (updateProductDto.categoryId)
+      product.category = await this.categoryService.findOne(
+        updateProductDto.categoryId,
+      );
+    if (updateProductDto.subCategoryId)
+      product.subCategory = await this.subCategoryService.findOne(
+        updateProductDto.subCategoryId,
+      );
 
     const initIdPhotos = product.photos.map((x) => x.id);
     let photos = [];

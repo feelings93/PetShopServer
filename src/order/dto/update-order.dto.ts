@@ -1,10 +1,11 @@
 import { ApiProperty, PartialType } from '@nestjs/swagger';
-import { IsIn, IsNumber, IsString } from 'class-validator';
+import { IsIn, IsNumber, IsOptional, IsString } from 'class-validator';
 import { CreateOrderDto } from './create-order.dto';
 
 export class UpdateOrderDto extends PartialType(CreateOrderDto) {
   @ApiProperty()
   @IsString()
+  @IsOptional()
   @IsIn([
     'Chờ xử lý',
     'Đã xác nhận',
@@ -13,14 +14,16 @@ export class UpdateOrderDto extends PartialType(CreateOrderDto) {
     'Đã hủy',
     'Đã hoàn thành',
   ])
-  status: string;
+  status?: string;
 
   @ApiProperty()
+  @IsOptional()
   @IsString()
   @IsIn(['Chưa thanh toán', 'Đã thanh toán'])
-  paymentStatus: string;
+  paymentStatus?: string;
 
   @ApiProperty()
+  @IsOptional()
   @IsNumber()
-  shipCost: number;
+  shipCost?: number;
 }

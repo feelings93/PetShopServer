@@ -33,6 +33,19 @@ export class OrderService {
     order.serviceOrderItems = [];
     order.productOrderItems = [];
     order.petOrderItems = [];
+    // Validate
+    for (let i = 0; i < createOrderDto.pets.length; i++) {
+      const pet = await this.petService.findOne(createOrderDto.pets[i].id);
+      if (pet.status === 'Hết hàng')
+        throw new BadRequestException('Pet is out of stock');
+    }
+    for (let i = 0; i < createOrderDto.products.length; i++) {
+      const product = await this.productService.findOne(
+        createOrderDto.products[i].id,
+      );
+      if (product.quantity < createOrderDto.products[i].quantity)
+        throw new BadRequestException('Exceed available quantity !');
+    }
     // Add service item
     for (let i = 0; i < createOrderDto.services.length; i++) {
       const serviceItem = new ServiceOrderItem();
@@ -45,6 +58,7 @@ export class OrderService {
       serviceItem.name = service.name;
       serviceItem.price = service.price;
       serviceItem.doneBy = doneBy;
+      serviceItem.service = service;
       order.serviceOrderItems.push(serviceItem);
       total += service.price;
     }
@@ -57,11 +71,13 @@ export class OrderService {
 
       petItem.name = pet.name;
       petItem.price = pet.price;
+      petItem.pet = pet;
       order.petOrderItems.push(petItem);
       total += pet.price;
       this.petService.update(createOrderDto.pets[i].id, { status: 'Hết hàng' });
     }
     //  Add product item
+
     for (let i = 0; i < createOrderDto.products.length; i++) {
       const productItem = new ProductOrderItem();
       const product = await this.productService.findOne(
@@ -70,12 +86,14 @@ export class OrderService {
       if (product.quantity < createOrderDto.products[i].quantity)
         throw new BadRequestException('Exceed available quantity !');
       productItem.name = product.name;
+      productItem.product = product;
       productItem.quantity = createOrderDto.products[i].quantity;
       productItem.price = product.price;
       order.productOrderItems.push(productItem);
       total += product.price * productItem.quantity;
       const updateProductDto = new UpdateProductDto();
-      updateProductDto.quantity -= createOrderDto.products[i].quantity;
+      updateProductDto.quantity =
+        product.quantity - createOrderDto.products[i].quantity;
       this.productService.update(
         createOrderDto.products[i].id,
         updateProductDto,
@@ -90,7 +108,19 @@ export class OrderService {
   }
 
   async findOne(id: number) {
-    const order = await this.orderRepo.findOne(id);
+    const order = await this.orderRepo.findOne(id, {
+      join: {
+        alias: 'order',
+        leftJoinAndSelect: {
+          productOrderItems: 'order.productOrderItems',
+          product: 'productOrderItems.product',
+          serviceOrderItems: 'order.serviceOrderItems',
+          service: 'serviceOrderItems.service',
+          petOrderItems: 'order.petOrderItems',
+          pet: 'petOrderItems.pet',
+        },
+      },
+    });
     if (!order) throw new NotFoundException('Order not found');
     return order;
   }
