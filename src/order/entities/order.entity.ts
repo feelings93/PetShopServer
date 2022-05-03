@@ -30,7 +30,7 @@ export class Order {
   @Column()
   paymentType: string;
 
-  @Column()
+  @Column({ default: 'Chưa thanh toán' })
   paymentStatus: string;
 
   @Column()

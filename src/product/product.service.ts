@@ -88,7 +88,7 @@ export class ProductService {
   async update(
     id: number,
     updateProductDto: UpdateProductDto,
-    files: Array<Express.Multer.File>,
+    files: Array<Express.Multer.File> = [],
   ) {
     // Validate
     if (updateProductDto.price && isNaN(+updateProductDto.price))

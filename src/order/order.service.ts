@@ -1,9 +1,14 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EmployeeService } from 'src/employee/employee.service';
 import { PetOrderItem } from 'src/pet-order-item/entities/pet-order-item.entity';
 import { PetService } from 'src/pet/pet.service';
 import { ProductOrderItem } from 'src/product-order-item/entities/product-order-item.entity';
+import { UpdateProductDto } from 'src/product/dto/update-product.dto';
 import { ProductService } from 'src/product/product.service';
 import { ServiceOrderItem } from 'src/service-order-item/entities/service-order-item.entity';
 import { ServiceService } from 'src/service/service.service';
@@ -24,6 +29,10 @@ export class OrderService {
   async create(createOrderDto: CreateOrderDto) {
     let total = 0;
     const order = await this.orderRepo.create(createOrderDto);
+    order.shipCost = 30000;
+    order.serviceOrderItems = [];
+    order.productOrderItems = [];
+    order.petOrderItems = [];
     // Add service item
     for (let i = 0; i < createOrderDto.services.length; i++) {
       const serviceItem = new ServiceOrderItem();
@@ -43,10 +52,14 @@ export class OrderService {
     for (let i = 0; i < createOrderDto.pets.length; i++) {
       const petItem = new PetOrderItem();
       const pet = await this.petService.findOne(createOrderDto.pets[i].id);
+      if (pet.status === 'Hết hàng')
+        throw new BadRequestException('Pet is out of stock');
+
       petItem.name = pet.name;
       petItem.price = pet.price;
       order.petOrderItems.push(petItem);
       total += pet.price;
+      this.petService.update(createOrderDto.pets[i].id, { status: 'Hết hàng' });
     }
     //  Add product item
     for (let i = 0; i < createOrderDto.products.length; i++) {
@@ -54,11 +67,19 @@ export class OrderService {
       const product = await this.productService.findOne(
         createOrderDto.products[i].id,
       );
+      if (product.quantity < createOrderDto.products[i].quantity)
+        throw new BadRequestException('Exceed available quantity !');
       productItem.name = product.name;
       productItem.quantity = createOrderDto.products[i].quantity;
       productItem.price = product.price;
       order.productOrderItems.push(productItem);
       total += product.price * productItem.quantity;
+      const updateProductDto = new UpdateProductDto();
+      updateProductDto.quantity -= createOrderDto.products[i].quantity;
+      this.productService.update(
+        createOrderDto.products[i].id,
+        updateProductDto,
+      );
     }
     order.total = total;
     return this.orderRepo.save(order);

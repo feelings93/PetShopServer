@@ -73,7 +73,7 @@ export class PetService {
   async update(
     id: number,
     updatePetDto: UpdatePetDto,
-    files: Array<Express.Multer.File>,
+    files: Array<Express.Multer.File> = [],
   ) {
     if (updatePetDto.price && isNaN(+updatePetDto.price))
       throw new BadRequestException('price must be number!');

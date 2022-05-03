@@ -1,11 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsIn, IsNumber, IsString } from 'class-validator';
+import { IsArray, IsIn, IsString } from 'class-validator';
 
 export class CreateOrderDto {
-  @ApiProperty()
-  @IsNumber()
-  shipCost: number;
-
   @ApiProperty()
   @IsString()
   @IsIn(['Online', 'Offline'])
@@ -15,11 +11,6 @@ export class CreateOrderDto {
   @IsString()
   @IsIn(['Thanh toán khi nhận hàng', 'Chuyển khoản'])
   paymentType: string;
-
-  @ApiProperty()
-  @IsString()
-  @IsIn(['Chưa thanh toán', 'Đã thanh toán'])
-  paymentStatus: string;
 
   @ApiProperty()
   @IsString()
