@@ -7,14 +7,16 @@ import {
   Request,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { UpdateCustomerDto } from 'src/customer/dto/update-customer.dto';
 import { CustomerAuthService } from './customer-auth.service';
 import { LoginUser } from './dto/login-user.dto';
+import { RegisterUser } from './dto/register-user.dto';
 import { JwtAuthGuard } from './guard/jwt-auth';
 import { LocalAuthGuard } from './guard/local-auth.guard';
 
 @ApiBearerAuth()
+@ApiTags('customer-auth')
 @Controller('customer-auth')
 export class CustomerAuthController {
   constructor(private customerAuthService: CustomerAuthService) {}
@@ -24,6 +26,11 @@ export class CustomerAuthController {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async login(@Request() req, @Body() _loginUser: LoginUser) {
     return this.customerAuthService.login(req.user);
+  }
+
+  @Post('/register')
+  async register(@Request() req, @Body() _registerUser: RegisterUser) {
+    return this.customerAuthService.register(_registerUser);
   }
 
   @UseGuards(JwtAuthGuard)

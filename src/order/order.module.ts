@@ -7,6 +7,7 @@ import { EmployeeModule } from 'src/employee/employee.module';
 import { ServiceModule } from 'src/service/service.module';
 import { PetModule } from 'src/pet/pet.module';
 import { ProductModule } from 'src/product/product.module';
+import { CustomerModule } from 'src/customer/customer.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { ProductModule } from 'src/product/product.module';
     ServiceModule,
     PetModule,
     ProductModule,
+    CustomerModule,
   ],
   controllers: [OrderController],
   providers: [OrderService],

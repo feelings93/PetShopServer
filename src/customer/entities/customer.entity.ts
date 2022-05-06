@@ -22,13 +22,7 @@ export class Customer {
   password?: string;
 
   @Column()
-  firstName: string;
-
-  @Column()
-  lastName: string;
-
-  @Column()
-  gender: string;
+  name: string;
 
   @Column()
   phone: string;

@@ -1,4 +1,4 @@
-import { PartialType } from '@nestjs/swagger';
+import { ApiProperty, PartialType } from '@nestjs/swagger';
 import {
   IsArray,
   IsBoolean,
@@ -9,22 +9,27 @@ import {
 import { CreateCustomerDto } from './create-customer.dto';
 
 export class UpdateCustomerDto extends PartialType(CreateCustomerDto) {
+  @ApiProperty()
   @IsNumber()
   @IsOptional()
   defaultAddressId?: number;
 
+  @ApiProperty()
   @IsArray()
   @IsOptional()
   addressesId?: number[];
 
+  @ApiProperty()
   @IsOptional()
   @IsBoolean()
   actived?: boolean;
 
+  @ApiProperty()
   @IsOptional()
   @IsBoolean()
   emailVerified?: boolean;
 
+  @ApiProperty()
   @IsOptional()
   @IsString()
   oldPassword?: string;

@@ -14,10 +14,11 @@ export class CustomerService {
   ) {}
   async create(createCustomerDto: CreateCustomerDto) {
     const saltRounds = 10;
-    createCustomerDto.password = bcrypt.hashSync(
-      createCustomerDto.password,
-      saltRounds,
-    );
+    if (createCustomerDto.password)
+      createCustomerDto.password = bcrypt.hashSync(
+        createCustomerDto.password,
+        saltRounds,
+      );
     const newCustomer = await this.customerRepo.create(createCustomerDto);
     newCustomer.cart = new Cart();
     return this.customerRepo.save(newCustomer);
@@ -31,7 +32,7 @@ export class CustomerService {
 
   async findOne(id: number) {
     const customer = await this.customerRepo.findOne(id, {
-      relations: ['defaultAddress', 'addresses', 'cart'],
+      relations: ['defaultAddress', 'addresses', 'cart', 'orders'],
     });
     if (!customer) {
       throw new NotFoundException('Không tìm thấy khách hàng này!');
@@ -41,22 +42,17 @@ export class CustomerService {
 
   async findOneByEmail(email: string) {
     const customer = await this.customerRepo.findOne({ email: email });
-    if (!customer) {
-      throw new NotFoundException('Customer not found!');
-    }
     return customer;
   }
 
   async update(id: number, updateCustomerDto: UpdateCustomerDto) {
     const saltRounds = 10;
     const customer = await this.findOne(id);
-    customer.firstName = updateCustomerDto?.firstName || customer.firstName;
-    customer.lastName = updateCustomerDto?.lastName || customer.lastName;
+    customer.name = updateCustomerDto?.name || customer.name;
     customer.phone = updateCustomerDto?.phone || customer.phone;
     customer.password = updateCustomerDto?.password
       ? bcrypt.hashSync(updateCustomerDto.password, saltRounds)
       : customer.password;
-    customer.gender = updateCustomerDto?.gender || customer.gender;
     if (typeof updateCustomerDto?.actived === 'boolean')
       customer.actived = updateCustomerDto?.actived;
 

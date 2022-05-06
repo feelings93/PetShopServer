@@ -4,6 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { CustomerService } from 'src/customer/customer.service';
 import { EmployeeService } from 'src/employee/employee.service';
 import { PetOrderItem } from 'src/pet-order-item/entities/pet-order-item.entity';
 import { PetService } from 'src/pet/pet.service';
@@ -25,6 +26,7 @@ export class OrderService {
     private readonly petService: PetService,
     private readonly productService: ProductService,
     private readonly employeeService: EmployeeService,
+    private readonly customerService: CustomerService,
   ) {}
   async create(createOrderDto: CreateOrderDto) {
     let total = 0;
@@ -34,6 +36,8 @@ export class OrderService {
     order.productOrderItems = [];
     order.petOrderItems = [];
     // Validate
+    if (!createOrderDto.customerId && !createOrderDto.email)
+      throw new BadRequestException('At least provide email or customer id');
     for (let i = 0; i < createOrderDto.pets.length; i++) {
       const pet = await this.petService.findOne(createOrderDto.pets[i].id);
       if (pet.status === 'Hết hàng')
@@ -46,6 +50,7 @@ export class OrderService {
       if (product.quantity < createOrderDto.products[i].quantity)
         throw new BadRequestException('Exceed available quantity !');
     }
+
     // Add service item
     for (let i = 0; i < createOrderDto.services.length; i++) {
       const serviceItem = new ServiceOrderItem();
@@ -98,6 +103,26 @@ export class OrderService {
         createOrderDto.products[i].id,
         updateProductDto,
       );
+    }
+    // Add relation to customer
+    if (createOrderDto.customerId) {
+      const customer = await this.customerService.findOne(
+        createOrderDto.customerId,
+      );
+      order.customer = customer;
+    } else if (createOrderDto.email) {
+      let customer;
+      customer = await this.customerService.findOneByEmail(
+        createOrderDto.email,
+      );
+      if (!customer) {
+        customer = await this.customerService.create({
+          email: createOrderDto.email,
+          name: createOrderDto.customerName,
+          phone: createOrderDto.phone,
+        });
+      }
+      order.customer = customer;
     }
     order.total = total;
     return this.orderRepo.save(order);

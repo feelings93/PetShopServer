@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { CustomerService } from 'src/customer/customer.service';
 import { UpdateCustomerDto } from 'src/customer/dto/update-customer.dto';
+import { RegisterUser } from './dto/register-user.dto';
 
 @Injectable()
 export class CustomerAuthService {
@@ -22,12 +23,27 @@ export class CustomerAuthService {
   }
 
   async login(user: any) {
-    const payload = { email: user.email, sub: user.id, role: user.role };
+    const payload = { email: user.email, sub: user.id };
     return {
       accessToken: this.jwtService.sign(payload),
       user: await this.getProfile(user.id),
     };
   }
+
+  async register(user: RegisterUser) {
+    let customer = await this.customerUserSerivce.findOneByEmail(user.email);
+    if (customer) {
+      if (customer.orders.length > 0)
+        throw new BadRequestException('User with this email has been existed!');
+      else {
+        this.customerUserSerivce.update(customer.id, user);
+      }
+    } else {
+      customer = await this.customerUserSerivce.create(user);
+    }
+    return this.login(customer);
+  }
+
   async getProfile(id: number) {
     const user = await this.customerUserSerivce.findOne(id);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

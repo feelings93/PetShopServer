@@ -50,6 +50,7 @@ import { SubCategory } from './sub-category/entities/sub-category.entity';
 import { AdminUserModule } from './admin-user/admin-user.module';
 import { AdminUser } from './admin-user/entities/admin-user.entity';
 import { AdminAuthModule } from './admin-auth/admin-auth.module';
+import { CustomerAuthModule } from './customer-auth/customer-auth.module';
 
 @Module({
   imports: [
@@ -98,6 +99,7 @@ import { AdminAuthModule } from './admin-auth/admin-auth.module';
     CartModule,
     CategoryModule,
     CustomerModule,
+    CustomerAuthModule,
     EmployeeModule,
     EmployeeToServiceModule,
     OrderModule,
