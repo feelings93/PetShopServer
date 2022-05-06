@@ -30,8 +30,14 @@ export class Customer {
   @Column()
   gender: string;
 
-  @Column({ unique: true })
+  @Column()
   phone: string;
+
+  @Column({ default: false })
+  emailVerified: boolean;
+
+  @Column({ default: true })
+  actived: boolean;
 
   @OneToMany(() => Order, (order) => order.customer)
   orders: Order[];

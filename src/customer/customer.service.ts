@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { CreateCustomerDto } from './dto/create-customer.dto';
 import { UpdateCustomerDto } from './dto/update-customer.dto';
 import { Customer } from './entities/customer.entity';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class CustomerService {
@@ -12,6 +13,11 @@ export class CustomerService {
     @InjectRepository(Customer) private customerRepo: Repository<Customer>,
   ) {}
   async create(createCustomerDto: CreateCustomerDto) {
+    const saltRounds = 10;
+    createCustomerDto.password = bcrypt.hashSync(
+      createCustomerDto.password,
+      saltRounds,
+    );
     const newCustomer = await this.customerRepo.create(createCustomerDto);
     newCustomer.cart = new Cart();
     return this.customerRepo.save(newCustomer);
@@ -33,10 +39,30 @@ export class CustomerService {
     return customer;
   }
 
+  async findOneByEmail(email: string) {
+    const customer = await this.customerRepo.findOne({ email: email });
+    if (!customer) {
+      throw new NotFoundException('Customer not found!');
+    }
+    return customer;
+  }
+
   async update(id: number, updateCustomerDto: UpdateCustomerDto) {
-    let customer = await this.findOne(id);
-    customer = { ...customer, ...updateCustomerDto };
-    return this.customerRepo.save(customer);
+    const saltRounds = 10;
+    const customer = await this.findOne(id);
+    customer.firstName = updateCustomerDto?.firstName || customer.firstName;
+    customer.lastName = updateCustomerDto?.lastName || customer.lastName;
+    customer.phone = updateCustomerDto?.phone || customer.phone;
+    customer.password = updateCustomerDto?.password
+      ? bcrypt.hashSync(updateCustomerDto.password, saltRounds)
+      : customer.password;
+    customer.gender = updateCustomerDto?.gender || customer.gender;
+    if (typeof updateCustomerDto?.actived === 'boolean')
+      customer.actived = updateCustomerDto?.actived;
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password, ...result } = await this.customerRepo.save(customer);
+    return result;
   }
 
   remove(id: number) {

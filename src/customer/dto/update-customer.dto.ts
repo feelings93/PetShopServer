@@ -1,11 +1,31 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { IsArray, IsNumber } from 'class-validator';
+import { PartialType } from '@nestjs/swagger';
+import {
+  IsArray,
+  IsBoolean,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 import { CreateCustomerDto } from './create-customer.dto';
 
 export class UpdateCustomerDto extends PartialType(CreateCustomerDto) {
   @IsNumber()
-  defaultAddressId: number;
+  @IsOptional()
+  defaultAddressId?: number;
 
   @IsArray()
-  addressesId: number[];
+  @IsOptional()
+  addressesId?: number[];
+
+  @IsOptional()
+  @IsBoolean()
+  actived?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  emailVerified?: boolean;
+
+  @IsOptional()
+  @IsString()
+  oldPassword?: string;
 }
