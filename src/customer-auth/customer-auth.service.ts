@@ -33,11 +33,7 @@ export class CustomerAuthService {
   async register(user: RegisterUser) {
     let customer = await this.customerUserSerivce.findOneByEmail(user.email);
     if (customer) {
-      if (customer.orders.length > 0)
-        throw new BadRequestException('User with this email has been existed!');
-      else {
-        this.customerUserSerivce.update(customer.id, user);
-      }
+      throw new BadRequestException('User with this email has been existed!');
     } else {
       customer = await this.customerUserSerivce.create(user);
     }
