@@ -51,6 +51,8 @@ import { AdminUserModule } from './admin-user/admin-user.module';
 import { AdminUser } from './admin-user/entities/admin-user.entity';
 import { AdminAuthModule } from './admin-auth/admin-auth.module';
 import { CustomerAuthModule } from './customer-auth/customer-auth.module';
+import { ReservationsModule } from './reservations/reservations.module';
+import { Reservation } from './reservations/entities/reservation.entity';
 
 @Module({
   imports: [
@@ -83,6 +85,7 @@ import { CustomerAuthModule } from './customer-auth/customer-auth.module';
           ProductCartItem,
           ProductOrderItem,
           ProductPhoto,
+          Reservation,
           Service,
           ServiceOrderItem,
           ServicePhoto,
@@ -116,6 +119,7 @@ import { CustomerAuthModule } from './customer-auth/customer-auth.module';
     ServiceOrderItemModule,
     ServicePhotoModule,
     SubCategoryModule,
+    ReservationsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
