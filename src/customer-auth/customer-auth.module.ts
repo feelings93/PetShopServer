@@ -11,7 +11,7 @@ import { LocalStrategy } from './strategy/local.strategy';
   providers: [CustomerAuthService, LocalStrategy],
   imports: [
     CustomerModule,
-    PassportModule,
+    PassportModule.register({ defaultStrategy: 'customer-local' }),
     JwtModule.registerAsync({
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
